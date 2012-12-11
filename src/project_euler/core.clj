@@ -72,6 +72,88 @@ does not imply divisibility by 4 - however, divisibility by 2 * 2 and 3 does imp
     first))
 
 
+(defn problem-6
+"Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.
+
+IMPROVEMENTS: I just know there's a good formula for this..."
+  []
+  (let [sum-of-squares (->> (range 1 101)
+                         (map #(* % %))
+                         (apply +))
+        square-of-sums (->> (range 1 101)
+                         (apply +)
+                         (#(* % %)))]
+    (- square-of-sums sum-of-squares)))
+
+
+(defn problem-7
+"By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.
+
+What is the 10 001st prime number?"
+  []
+  (nth (utils/primes) 10000))
+
+
+(def problem-8-input
+  "73167176531330624919225119674426574742355349194934
+96983520312774506326239578318016984801869478851843
+85861560789112949495459501737958331952853208805511
+12540698747158523863050715693290963295227443043557
+66896648950445244523161731856403098711121722383113
+62229893423380308135336276614282806444486645238749
+30358907296290491560440772390713810515859307960866
+70172427121883998797908792274921901699720888093776
+65727333001053367881220235421809751254540594752243
+52584907711670556013604839586446706324415722155397
+53697817977846174064955149290862569321978468622482
+83972241375657056057490261407972968652414535100474
+82166370484403199890008895243450658541227588666881
+16427171479924442928230863465674813919123162824586
+17866458359124566529476545682848912883142607690042
+24219022671055626321111109370544217506941658960408
+07198403850962455444362981230987879927244284909188
+84580156166097919133875499200524063689912560717606
+05886116467109405077541002256983155200055935729725
+71636269561882670428252483600823257530420752963450")
+
+(defn problem-8
+"Find the greatest product of five consecutive digits in the 1000-digit number."
+  []
+  (let [digits (->> problem-8-input
+                 (remove #{\newline})
+                 (map (comp #(Integer/parseInt %) str)))
+        products (->> digits
+                   (partition 5 1)
+                   (remove #(some (partial = 0) %)) ;let's count sequences with 0 out
+                   (map (partial apply *)))]
+    (apply max products)))
+
+
+(defn problem-9
+"There exists exactly one Pythagorean triplet for which a + b + c = 1000.
+Find the product abc."
+  []
+  (let [square #(* % %)]
+    (->> (for [a (range 1 1000)
+               b (range (inc a) 1000)]
+           (let [c (- 1000 a b)]
+             (if (= (+ (square a) (square b)) (square c))
+               (* a b c)
+               nil)))
+      (remove nil?)
+      first)))
+
+
+(defn problem-10
+"The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
+
+Find the sum of all the primes below two million."
+  []
+  (->> (utils/primes)
+    (take-while #(< % 2000000))
+    (apply +)))
+
+
 (defn problem-29
   []
   (let [a (map bigint (range 2 101))
