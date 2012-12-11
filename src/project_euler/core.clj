@@ -58,9 +58,15 @@ Find the largest palindrome made from the product of two 3-digit numbers."
 (defn problem-5
 "2520 is the smallest number that can be divided by each of the numbers from 1 to 10 without any remainder.
 
-What is the smallest positive number that is evenly divisible by all of the numbers from 1 to 20?"
+What is the smallest positive number that is evenly divisible by all of the numbers from 1 to 20?
+
+SOLUTION: Being smart about it, it's very straight forward. All primes from 2 to 20 will need to be part of
+the product. In addition, some of the primes will need to be applied multiple times, since divisibility by 2
+does not imply divisibility by 4 - however, divisibility by 2 * 2 and 3 does imply divisibility by both 4, 6
+12, for example."
   []
-  (->> (range)
+  (* 2 2 2 2 3 3 5 7 11 13 17 19)
+  #_(->> (range)
     (drop 1)
     (filter #(every? (partial utils/divisable? %) (range 1 21)))
     first))
