@@ -165,6 +165,35 @@ Find the sum of all the primes below two million."
       count)))
 
 
+(defn problem-37
+"The number 3797 has an interesting property. Being prime itself, it is possible to continuously remove digits from left to right, and remain prime at each stage: 3797, 797, 97, and 7. Similarly we can work from right to left: 3797, 379, 37, and 3.
+
+Find the sum of the only eleven primes that are both truncatable from left to right and right to left.
+
+NOTE: 2, 3, 5, and 7 are not considered to be truncatable primes.
+
+IMPROVEMENTS: Do not convert between numbers and strings."
+  []
+  (let [truncations (fn [x rest-or-butlast]
+                      (->> x
+                        str
+                        seq
+                        (iterate #(rest-or-butlast %))
+                        (take-while (complement empty?))
+                        (map (partial apply str))
+                        (map #(Long/parseLong %)))) 
+        all-truncations (fn [x]
+                          (concat (truncations x rest)
+                                  (truncations x butlast)))
+        truncatable? (fn [x]
+                       (every? utils/prime? (all-truncations x)))
+        truncatable-primes (->> (utils/primes)
+                             (drop 4)
+                             (filter truncatable?)
+                             (take 11))]
+    (apply + truncatable-primes)))
+
+
 (defn problem-52
 "It can be seen that the number, 125874, and its double, 251748, contain exactly the same digits, but in a different order.
 

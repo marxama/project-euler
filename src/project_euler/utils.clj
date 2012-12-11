@@ -6,16 +6,27 @@
   (->> (iterate (fn [[a b]] [b (+ a b)]) [1 2])
     (map first)))
 
+(defn divisable?
+  "Returns whether or not num is evenly divisible by div."
+  [num div]
+  (zero? (rem num div)))
+
+(defn prime?
+  [x]
+  (cond 
+    (< x 2) false
+    (= x 2) true
+    :else (not (some #(divisable? x %) (->> x
+                                         Math/sqrt
+                                         Math/ceil
+                                         inc
+                                         (range 2))))))
+
 (defn primes
   "Returns an infinite seq of all primes."
   []
-  (cons 2 (->> (iterate (partial + 2) 3N)
-            (filter (fn [x] (not (some #(zero? (rem x %)) (->> x
-                                                            Math/sqrt
-                                                            Math/ceil
-                                                            inc
-                                                            range
-                                                            (drop 3)))))))))
+  (cons 2N (->> (iterate (partial + 2) 3N)
+            (filter prime?))))
 
 (defn reverse-number
   [x]
@@ -31,11 +42,6 @@
    palindromic, whereas 122 is not." 
   [x]
   (= x (reverse-number x)))
-
-(defn divisable?
-  "Returns whether or not num is evenly divisible by div."
-  [num div]
-  (zero? (rem num div)))
 
 (defn !
   [x]
