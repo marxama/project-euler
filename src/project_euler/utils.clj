@@ -25,8 +25,14 @@
 (defn primes
   "Returns an infinite seq of all primes."
   []
-  (cons 2N (->> (iterate (partial + 2) 3N)
-            (filter prime?))))
+  (cons 2N
+    (cons 3N
+      (cons 5N 
+            (->> (iterate (fn [[n [a & r]]]
+                            [(+ n a) r]) 
+                          [7N (cycle [2 2 2 4])])
+              (map first) 
+              (filter prime?))))))
 
 (defn reverse-number
   [x]
