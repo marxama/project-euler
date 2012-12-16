@@ -8,8 +8,8 @@
 Find the sum of all the multiples of 3 or 5 below 1000."
   []
   (->> (range 1000)
-    (filter #(or (utils/divisable? % 3)
-                 (utils/divisable? % 5)))
+    (filter #(or (utils/divisible? % 3)
+                 (utils/divisible? % 5)))
     (apply +)))
 
 
@@ -68,7 +68,7 @@ does not imply divisibility by 4 - however, divisibility by 2 * 2 and 3 does imp
   (* 2 2 2 2 3 3 5 7 11 13 17 19)
   #_(->> (range)
     (drop 1)
-    (filter #(every? (partial utils/divisable? %) (range 1 21)))
+    (filter #(every? (partial utils/divisible? %) (range 1 21)))
     first))
 
 

@@ -6,17 +6,19 @@
   (->> (iterate (fn [[a b]] [b (+ a b)]) [1 2])
     (map first)))
 
-(defn divisable?
+(defn divisible?
   "Returns whether or not num is evenly divisible by div."
   [num div]
   (zero? (rem num div)))
+
+(declare primes)
 
 (defn prime?
   [x]
   (cond 
     (< x 2) false
     (= x 2) true
-    :else (not (some #(divisable? x %) (->> x
+    :else (not (some #(divisible? x %) (->> x
                                          Math/sqrt
                                          Math/ceil
                                          inc
