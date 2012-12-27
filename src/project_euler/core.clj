@@ -166,6 +166,36 @@ Find the sum of all the primes below two million."
       count)))
 
 
+(defn problem-32
+"We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once; for example, the 5-digit number, 15234, is 1 through 5 pandigital.
+
+The product 7254 is unusual, as the identity, 39  186 = 7254, containing multiplicand, multiplier, and product is 1 through 9 pandigital.
+
+Find the sum of all products whose multiplicand/multiplier/product identity can be written as a 1 through 9 pandigital.
+
+HINT: Some products can be obtained in more than one way so be sure to only include it once in your sum.
+
+SOLUTION: An optimization below is that the number of digits in the product
+is either the total number of digits in the multiplicand and the multiplier,
+or one less. This means that we are only looking for cases where the total
+number of digits in the multiplicand and the multiplier is 5. We are also
+obviously utilizing the fact that multiplication is commutative, which gives us
+that we only need to check multiplicands and multipliers with 1x4 or 2x3 digits."
+  []
+  (let [products (for [multiplicand (range 1 99)
+                       multiplier (case (count (str multiplicand))
+                                    1 (range 1234 9877)
+                                    2 (range 123 988))]
+                   (let [product (* multiplicand multiplier)]
+                     (if (utils/pandigital? (str multiplicand multiplier product))
+                       product
+                       nil)))]
+    (->> products
+      (remove nil?)
+      (into #{})
+      (apply +))))
+
+
 (defn problem-33
 "The fraction 49/98 is a curious fraction, as an inexperienced mathematician in attempting to simplify it may incorrectly believe that 49/98 = 4/8, which is correct, is obtained by cancelling the 9s.
 
@@ -175,17 +205,20 @@ There are exactly four non-trivial examples of this type of fraction, less than 
 
 If the product of these four fractions is given in its lowest common terms, find the value of the denominator."
   []
-  (for [numerator (range 1 10)
-        denominator (range numerator 10)
-        common-digit (range 1 10)]
-    (let [n1 (+ numerator (* 10 common-digit))
-          n2 (+ (* 10 numerator) common-digit)
-          d1 (+ denominator (* 10 common-digit))
-          d2 (+ (* 10 denominator) common-digit)
-          fractions [(/ n1 d1) (/ n2 d1) (/ n1 d2) (/ n2 d2)]]
-      (->> fractions
-        (filter #(< % 1))
-        (filter )))))
+  (->> (for [numerator (range 1 10)
+             denominator (range numerator 10)
+             common-digit (range 1 10)]
+         (let [n1 (+ numerator (* 10 common-digit))
+               n2 (+ (* 10 numerator) common-digit)
+               d1 (+ denominator (* 10 common-digit))
+               d2 (+ (* 10 denominator) common-digit)
+               fractions [(/ n1 d1) (/ n2 d1) (/ n1 d2) (/ n2 d2)]]
+           (->> fractions
+             (filter #(< % 1))
+             (filter (partial = (/ numerator denominator))))))
+    (apply concat)
+    (apply *)
+    (denominator)))
 
 
 (defn problem-37

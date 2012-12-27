@@ -12,3 +12,10 @@
   (is (= '(1 2 0) (digits 120)))
   (is (= '(0) (digits 0)))
   (is (= '(1 0) (digits 012))))
+
+(deftest test-pandigital?
+  (is (= true (pandigital? 51234)))
+  (is (= false (pandigital? 51233)))
+  (is (= false (pandigital? 5124)))
+  (is (= true (pandigital? 1)))
+  (is (= true (pandigital? 578249631))))

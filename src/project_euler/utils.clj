@@ -81,3 +81,11 @@
   [x]
   (let [s (str x)]
     (map (comp #(Long/parseLong %) str) s)))
+
+(defn pandigital?
+  [x]
+  (let [str-x (str x)]
+    (if (> (count str-x) 9) false
+      (let [sorted-x (apply str (sort str-x))
+            expected (apply str (range 1 (inc (count sorted-x))))]
+        (= sorted-x expected)))))
