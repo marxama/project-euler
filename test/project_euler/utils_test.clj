@@ -19,3 +19,7 @@
   (is (= false (pandigital? 5124)))
   (is (= true (pandigital? 1)))
   (is (= true (pandigital? 578249631))))
+
+(deftest test-pentagonals
+  (is (= '(1 5 12 22 35 51 70 92 117 145)
+         (take 10 (pentagonals)))))
