@@ -121,7 +121,8 @@ What is the 10 001st prime number?"
   []
   (let [digits (->> problem-8-input
                  (remove #{\newline})
-                 (map (comp #(Integer/parseInt %) str)))
+                 (apply str)
+                 utils/digits)
         products (->> digits
                    (partition 5 1)
                    (remove #(some (partial = 0) %)) ;let's count sequences with 0 out
@@ -163,6 +164,28 @@ Find the sum of all the primes below two million."
            (apply * (repeat b a)))
       distinct
       count)))
+
+
+(defn problem-33
+"The fraction 49/98 is a curious fraction, as an inexperienced mathematician in attempting to simplify it may incorrectly believe that 49/98 = 4/8, which is correct, is obtained by cancelling the 9s.
+
+We shall consider fractions like, 30/50 = 3/5, to be trivial examples.
+
+There are exactly four non-trivial examples of this type of fraction, less than one in value, and containing two digits in the numerator and denominator.
+
+If the product of these four fractions is given in its lowest common terms, find the value of the denominator."
+  []
+  (for [numerator (range 1 10)
+        denominator (range numerator 10)
+        common-digit (range 1 10)]
+    (let [n1 (+ numerator (* 10 common-digit))
+          n2 (+ (* 10 numerator) common-digit)
+          d1 (+ denominator (* 10 common-digit))
+          d2 (+ (* 10 denominator) common-digit)
+          fractions [(/ n1 d1) (/ n2 d1) (/ n1 d2) (/ n2 d2)]]
+      (->> fractions
+        (filter #(< % 1))
+        (filter )))))
 
 
 (defn problem-37

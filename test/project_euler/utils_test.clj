@@ -5,3 +5,10 @@
 
 (deftest test-primes
   (is (= first-1000-primes (take 1000 (primes)))))
+
+(deftest test-digits
+  (is (= '(1 2 3) (digits 123)))
+  (is (= '(1 2 3 4 5 6 7 8 9) (digits 123456789)))
+  (is (= '(1 2 0) (digits 120)))
+  (is (= '(0) (digits 0)))
+  (is (= '(1 0) (digits 012))))

@@ -75,3 +75,9 @@
   [r n]
   (/ (! n)
      (* (! r) (! (- n r)))))
+
+(defn digits
+  "Returns a seq of the digits in x, which may be an int, long, or string."
+  [x]
+  (let [s (str x)]
+    (map (comp #(Long/parseLong %) str) s)))
