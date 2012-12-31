@@ -275,7 +275,7 @@ from the squares to their corresponding square root."
                             :let [c (get squares (+ (utils/square a)
                                                     (utils/square b)))]
                             :when (and (not (nil? c))
-                                       (<= 1000 (+ a b c)))]
+                                       (<= (+ a b c) 1000))]
                         (+ a b c))]
     (->> (frequencies all-triangles)
       (sort-by val)
