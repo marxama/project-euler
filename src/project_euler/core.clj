@@ -269,7 +269,7 @@ from the squares to their corresponding square root."
   []
   (let [squares (zipmap (map utils/square (range 1 500))
                         (range 1 500))
-        all-triangles (for [a (range 1 294)
+        perimeters (for [a (range 1 294)
                             b (range 1 (Math/ceil (/ (- 1000 a)
                                                      2)))
                             :let [c (get squares (+ (utils/square a)
@@ -277,10 +277,29 @@ from the squares to their corresponding square root."
                             :when (and (not (nil? c))
                                        (<= (+ a b c) 1000))]
                         (+ a b c))]
-    (->> (frequencies all-triangles)
-      (sort-by val)
-      last
+    (->> (frequencies perimeters)
+      (sort-by val) ; sort by count
+      last ; choose the (perimeter, count) pair with the highest count
       first)))
+
+
+(defn problem-40
+"An irrational decimal fraction is created by concatenating the positive integers:
+
+0.123456789101112131415161718192021...
+
+It can be seen that the 12th digit of the fractional part is 1.
+
+If dn represents the nth digit of the fractional part, find the value of the following expression.
+
+d1 * d10 * d100 * d1000 * d10000 * d100000 * d1000000"
+  []
+  (let [digits (->> (range)
+                 (drop 1)
+                 (mapcat str)
+                 (map (comp #(Integer/parseInt %) str)))]
+    (apply *
+           (map (partial nth digits) [0 9 99 999 9999 99999 999999]))))
 
 
 (defn problem-44
@@ -347,6 +366,23 @@ What is the smallest odd composite that cannot be written as the sum of a prime 
   (->> (utils/odd-composites)
     (remove utils/sum-of-prime-and-twice-a-square?)
     first))
+
+
+(defn problem-49
+"The arithmetic sequence, 1487, 4817, 8147, in which each of the terms increases by 3330, is unusual in two ways: (i) each of the three terms are prime, and, (ii) each of the 4-digit numbers are permutations of one another.
+
+There are no arithmetic sequences made up of three 1-, 2-, or 3-digit primes, exhibiting this property, but there is one other 4-digit increasing sequence.
+
+What 12-digit number do you form by concatenating the three terms in this sequence?"
+  []
+  (->> (utils/primes)
+    (drop-while #(< % 1000))
+    (take-while #(< % 3340))
+    (remove #{1487})
+    (map #(do [% (+ % 3330) (+ % 6660)]))
+    (filter (partial every? utils/prime?))
+    (filter (fn [coll] (apply = (map (comp sort str) coll))))
+    (map (partial apply str))))
 
 
 (defn problem-52
