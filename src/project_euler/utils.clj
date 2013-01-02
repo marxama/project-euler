@@ -235,3 +235,119 @@
     first
     nil?
     not))
+
+
+
+
+(defn parse-poker-card
+  "Takes a string of two characters - a value (2-9, T, J, Q, K, A) and a
+   suit (H, D, S, C), and returns a map of an integer :value (where T, J, Q, K 
+   and A and are translated to 10, 11, 12, 13 and 14, respectively) and a :suit 
+   of :hearts, :diamonds, :spades, or :clubs."
+  [s]
+  (let [[value-char suit-char] (.toUpperCase s)
+        value-str (str value-char) 
+        value (cond
+                (re-find #"\d" value-str) (Integer/parseInt value-str)
+                :else (case value-char
+                        \T 10
+                        \J 11
+                        \Q 12
+                        \K 13
+                        \A 14))
+        suit (case suit-char
+               \H :hearts
+               \D :diamonds
+               \S :spades
+               \C :clubs)]
+    {:value value :suit suit}))
+
+
+(defn poker-hand-value
+  "Takes a collection of five cards (each being a map with a :suit and a :value),
+   and returns the value of the cards as defined in the game of Poker. A hand
+   can be valued at several depths, and as such, a seq of values are returned,
+   where the first has dominance over the second, and so on.
+
+   For example, a pair would get a first value of 1, a two-pair would get a first
+   value of 2, and so on. The pair would get another value following the first value,
+   stating the value of the cards we have the pair in. Following this, we fill up
+   with the remaining three values, in order from highest to lowest. This allows us
+   to see that a pair in queens with a 10, 8 and 5 is worth more than a pair in queens
+   with a 10, 8, and 4."
+  [coll]
+  (let [values (map :value coll)
+        sorted-freqs (->> (frequencies values)
+                       ; here, we sort first on count, then on value
+                       (sort (comparator (fn [[k1 v1] [k2 v2]]
+                                           (cond 
+                                             (= v1 v2) (< k1 k2)
+                                             :else (< v1 v2)))))
+                       reverse)
+        counts-in-order (map val sorted-freqs)
+        values-in-order-of-freq-then-value (map key sorted-freqs)
+        flush? (apply = (map :suit coll))
+        straight? (or
+                    (apply = (map - (sort values) (range)))
+                    (apply = (map - (sort
+                                      (replace {14 1} values))
+                                  (range))))
+        highest-straight-value #(if (and (= 14 (apply max values))       ; a somewhat ugly way of checking the special
+                                         (empty? (filter #{13} values))) ; case where Ace is used as 1 in a straight
+                                  5
+                                  (apply max values))]
+    (cond
+      ;; Royal flush
+      (and flush?
+           (= [10 11 12 13 14] (sort values)))
+      [9]
+      
+      ;; Straight flush
+      (and flush? straight?)
+      (conj [8] (highest-straight-value))
+      
+      ;; Four of a kind
+      (= 4 (first counts-in-order))
+      (cons 7 values-in-order-of-freq-then-value)
+      
+      ;; Full house
+      (and (= 3 (first counts-in-order))
+           (= 2 (second counts-in-order)))
+      (cons 6 values-in-order-of-freq-then-value)
+      
+      ;; Flush
+      flush?
+      (cons 5 values-in-order-of-freq-then-value)
+      
+      ;; Straight
+      straight?
+      (conj [4] (highest-straight-value))
+      
+      ;; Three of a kind
+      (= 3 (first counts-in-order))
+      (cons 3 values-in-order-of-freq-then-value)
+      
+      ;; Two pairs
+      (= 2 (first counts-in-order) (second counts-in-order))
+      (cons 2 values-in-order-of-freq-then-value)
+      
+      ;; One pair
+      (= 2 (first counts-in-order))
+      (cons 1 values-in-order-of-freq-then-value)
+      
+      :else
+      (cons 0 values-in-order-of-freq-then-value))))
+
+
+(defn compare-poker-hands
+  "Compares two poker hands, represented by collections of maps of :suit and :value.
+   Uses standard Comparable semantics - if hand-1 < hand-2 we return a negative int,
+   if hand-1 > hand-2 we return a positive value, and if hand-1 = hand-2, we return 0."
+  [hand-1 hand-2]
+  (let [result (->> 
+                 (map - (poker-hand-value hand-1) (poker-hand-value hand-2))
+                 (remove zero?)
+                 first)]
+    (if (nil? result) 
+      0 
+      result)))
