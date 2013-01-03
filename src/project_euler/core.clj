@@ -427,10 +427,9 @@ Find the smallest positive integer, x, such that 2x, 3x, 4x, 5x, and 6x, contain
   (let [lines (-> (System/getProperty "user.dir")
                 (str  "\\data\\problem54.txt")
                 slurp
-                (.split "\n")
-                seq)
+                (.split "\n"))
         games (->> lines
-                (map (comp seq #(.split % " ")))
+                (map #(.split % " "))
                 (map (fn [game]
                        {:player1 (map utils/parse-poker-card (take 5 game))
                         :player2 (map utils/parse-poker-card (take 5 (drop 5 game)))})))]
@@ -505,3 +504,38 @@ Considering natural numbers of the form, ab, where a, b  100, what is the maximu
                 (for [a (range 1 100)]
                   (map (comp (partial apply +) utils/digits)
                        (reductions (fn [acc _] (* acc a)) 1N (range 1 100)))))))
+
+
+(defn problem-67
+"By starting at the top of the triangle below and moving to adjacent numbers on the row below, the maximum total from top to bottom is 23.
+
+3
+7 4
+2 4 6
+8 5 9 3
+
+That is, 3 + 7 + 4 + 9 = 23.
+
+Find the maximum total from top to bottom in triangle.txt (right click and 'Save Link/Target As...'), a 15K text file containing a triangle with one-hundred rows.
+
+SOLUTION: Working from the bottom up, we take the maximum of a node's children
+and add it to the node, working recursively until we reach the root.
+Obviosly, some tree structure would be suitable here, although the current
+solution works instantly. To revisit later, try to use some of Clojure's
+tree-walking functions."
+  []
+  (let [lines (-> (System/getProperty "user.dir")
+                (str  "\\data\\problem67.txt")
+                slurp
+                (.split "\n")
+                reverse)
+        lines (->> lines
+                (map #(.split % " "))
+                (map (fn [line] (map #(Integer/parseInt %) line))))]
+    (loop [[top-line second-line & rest-lines] lines]
+      (if (nil? second-line)
+        (first top-line)
+        (recur (conj rest-lines
+                     (map + second-line 
+                          (->> (partition 2 1 top-line)
+                            (map (partial apply max))))))))))
