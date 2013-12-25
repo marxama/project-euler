@@ -175,23 +175,25 @@ It is possible to make £2 in the following way:
 1×£1 + 1×50p + 2×20p + 1×5p + 1×2p + 3×1p
 How many different ways can £2 be made using any number of coins?"
   []
-  (let [sum-of-coins (fn [[ones twos fives tens twenties fifties pounds two-pounds]]
-                       (+ ones (* 2 twos) (* 5 fives) (* 10 tens) (* 20 twenties)
-                         (* 50 fifties) (* 100 pounds) (* 200 two-pounds)))]
-    (->>
-      (for [ones (range 0 201)
-            twos (range 0 (min 101 (- 201 ones)))
-            fives (range 0 (min 41 (- 201 ones (* 2 twos))))
-            tens (range 0 (min 21 (- 201 ones (* 2 twos) (* 5 fives))))
-            twenties (range 0 (min 11 (- 201 ones (* 2 twos) (* 5 fives) (* 10 tens))))
-            fifties (range 0 (min 5 (- 201 ones (* 2 twos) (* 5 fives) (* 10 tens) (* 20 twenties))))
-            pounds (range 0 (min 3 (- 201 ones (* 2 twos) (* 5 fives) (* 10 tens) (* 20 twenties) (* 50 fifties))))
-            two-pounds (range 0 (min 2 (- 201 ones (* 2 twos) (* 5 fives) (* 10 tens) (* 20 twenties) (* 50 fifties) (* 100 pounds))))
-            :when (even? (+ ones fives))]
-        [ones twos fives tens twenties fifties pounds two-pounds])
-      (map sum-of-coins)
-      (filter (partial = 200))
-      count)))
+  (count
+    (for [two-pounds (map (partial * 200) (range 0 2))
+          :let [sum two-pounds]
+          pounds (map (partial * 100) (range 0 (min 3 (- 201 sum))))
+          :let [sum (+ sum pounds)]
+          fifties (map (partial * 50) (range 0 (min 5 (- 201 sum))))
+          :let [sum (+ sum fifties)]
+          twenties (map (partial * 20) (range 0 (min 11 (- 201 sum))))
+          :let [sum (+ sum twenties)]
+          tens (map (partial * 10) (range 0 (min 21 (- 201 sum))))
+          :let [sum (+ sum tens)]
+          fives (map (partial * 5) (range 0 (min 41 (- 201 sum))))
+          :let [sum (+ sum fives)]
+          twos (map (partial * 2) (range 0 (min 101 (- 201 sum))))
+          :let [sum (+ sum twos)]
+          ones (range 0 201)
+          :let [sum (+ sum ones)]
+          :when (= 200 sum)]
+      sum)))
 
 
 (defn problem-32
