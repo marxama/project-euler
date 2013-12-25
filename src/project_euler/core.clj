@@ -166,6 +166,34 @@ Find the sum of all the primes below two million."
       count)))
 
 
+(defn problem-31
+"In England the currency is made up of pound, £, and pence, p, and there are eight coins in general circulation:
+
+1p, 2p, 5p, 10p, 20p, 50p, £1 (100p) and £2 (200p).
+It is possible to make £2 in the following way:
+
+1×£1 + 1×50p + 2×20p + 1×5p + 1×2p + 3×1p
+How many different ways can £2 be made using any number of coins?"
+  []
+  (let [sum-of-coins (fn [[ones twos fives tens twenties fifties pounds two-pounds]]
+                       (+ ones (* 2 twos) (* 5 fives) (* 10 tens) (* 20 twenties)
+                         (* 50 fifties) (* 100 pounds) (* 200 two-pounds)))]
+    (->>
+      (for [ones (range 0 201)
+            twos (range 0 (min 101 (- 201 ones)))
+            fives (range 0 (min 41 (- 201 ones (* 2 twos))))
+            tens (range 0 (min 21 (- 201 ones (* 2 twos) (* 5 fives))))
+            twenties (range 0 (min 11 (- 201 ones (* 2 twos) (* 5 fives) (* 10 tens))))
+            fifties (range 0 (min 5 (- 201 ones (* 2 twos) (* 5 fives) (* 10 tens) (* 20 twenties))))
+            pounds (range 0 (min 3 (- 201 ones (* 2 twos) (* 5 fives) (* 10 tens) (* 20 twenties) (* 50 fifties))))
+            two-pounds (range 0 (min 2 (- 201 ones (* 2 twos) (* 5 fives) (* 10 tens) (* 20 twenties) (* 50 fifties) (* 100 pounds))))
+            :when (even? (+ ones fives))]
+        [ones twos fives tens twenties fifties pounds two-pounds])
+      (map sum-of-coins)
+      (filter (partial = 200))
+      count)))
+
+
 (defn problem-32
 "We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once; for example, the 5-digit number, 15234, is 1 through 5 pandigital.
 
