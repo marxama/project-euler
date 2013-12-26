@@ -178,19 +178,19 @@ How many different ways can £2 be made using any number of coins?"
   (count
     (for [two-pounds (map (partial * 200) (range 0 2))
           :let [sum two-pounds]
-          pounds (map (partial * 100) (range 0 (min 3 (- 201 sum))))
+          pounds (map (partial * 100) (range 0 (inc (/ (- 200 sum) 100))))
           :let [sum (+ sum pounds)]
-          fifties (map (partial * 50) (range 0 (min 5 (- 201 sum))))
+          fifties (map (partial * 50) (range 0 (inc (/ (- 200 sum) 50))))
           :let [sum (+ sum fifties)]
-          twenties (map (partial * 20) (range 0 (min 11 (- 201 sum))))
+          twenties (map (partial * 20) (range 0 (inc (/ (- 200 sum) 20))))
           :let [sum (+ sum twenties)]
-          tens (map (partial * 10) (range 0 (min 21 (- 201 sum))))
+          tens (map (partial * 10) (range 0 (inc (/ (- 200 sum) 10))))
           :let [sum (+ sum tens)]
-          fives (map (partial * 5) (range 0 (min 41 (- 201 sum))))
+          fives (map (partial * 5) (range 0 (inc (/ (- 200 sum) 5))))
           :let [sum (+ sum fives)]
-          twos (map (partial * 2) (range 0 (min 101 (- 201 sum))))
+          twos (map (partial * 2) (range 0 (inc (/ (- 200 sum) 2))))
           :let [sum (+ sum twos)]
-          ones (range 0 201)
+          ones (range 0 (- 201 sum))
           :let [sum (+ sum ones)]
           :when (= 200 sum)]
       sum)))
