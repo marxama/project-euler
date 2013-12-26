@@ -180,6 +180,7 @@ How many different ways can £2 be made using any number of coins?"
         values-for (fn [coin sum]
                      (map #(* coin %) (range 0 (inc (/ (- target sum) coin)))))]
     (->> coins
+      sort reverse
       (reduce (fn [sums coin]
                 (mapcat (fn [sum]
                           (map #(+ sum %)
