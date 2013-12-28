@@ -176,18 +176,18 @@ It is possible to make £2 in the following way:
 How many different ways can £2 be made using any number of coins?"
   []
   (let [target 200
-        coins [200 100 50 20 10 5 2 1]
-        values-for (fn [coin sum]
-                     (map #(* coin %) (range 0 (inc (/ (- target sum) coin)))))]
+        coins [200 100 50 20 10 5 2 1]]
     (->> coins
       sort reverse
       (reduce (fn [sums coin]
-                (for [sum sums
-                      coin-sum (values-for coin sum)]
-                  (+ sum coin-sum))) [0])
+                (let [coin-sums (map #(* coin %) (range))]
+                  (for [sum sums
+                        coin-sum coin-sums
+                        :let [final-sum (+ sum coin-sum)]
+                        :while (<= final-sum target)]
+                  final-sum))) [0])
       (filter #(= target %))
       count)))
-
 
 (defn problem-32
 "We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once; for example, the 5-digit number, 15234, is 1 through 5 pandigital.
